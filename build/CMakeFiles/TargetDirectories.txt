@@ -1,0 +1,3 @@
+/home/parallels/projects/process_m/build/CMakeFiles/rebuild_cache.dir
+/home/parallels/projects/process_m/build/CMakeFiles/monitor.dir
+/home/parallels/projects/process_m/build/CMakeFiles/edit_cache.dir
