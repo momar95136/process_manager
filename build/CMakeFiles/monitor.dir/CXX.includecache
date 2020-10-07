@@ -43,10 +43,14 @@ processor.h
 ../include/processor.h
 
 /home/parallels/projects/process_m/src/format.cpp
-string
--
 format.h
 /home/parallels/projects/process_m/src/format.h
+iomanip
+-
+sstream
+-
+string
+-
 
 /home/parallels/projects/process_m/src/linux_parser.cpp
 linux_parser.h
@@ -105,6 +109,8 @@ processor.h
 /home/parallels/projects/process_m/src/processor.h
 
 /home/parallels/projects/process_m/src/system.cpp
+system.h
+/home/parallels/projects/process_m/src/system.h
 unistd.h
 -
 cstddef
@@ -115,12 +121,10 @@ string
 -
 vector
 -
+linux_parser.h
+/home/parallels/projects/process_m/src/linux_parser.h
 process.h
 /home/parallels/projects/process_m/src/process.h
 processor.h
 /home/parallels/projects/process_m/src/processor.h
-system.h
-/home/parallels/projects/process_m/src/system.h
-linux_parser.h
-/home/parallels/projects/process_m/src/linux_parser.h
 

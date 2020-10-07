@@ -12,6 +12,10 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+// Global to avoid IO
+int TotalProcesses_count = 0;
+int RunningProcesses_count = 0;
+
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -68,7 +72,7 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
+// DONE: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() {
   // total used memory = MemTotal - MemFree
   // Non cache / buffer memory (green) total used memory - (Buffers + Cached
@@ -111,20 +115,34 @@ float LinuxParser::MemoryUtilization() {
     getline(file, cache);
     cache.erase(std::remove(cache.begin(), cache.end(), ' '), cache.end()); */
 
-    double total_mem_double =  atof(MemTotal_v.c_str());
+    double total_mem_double = atof(MemTotal_v.c_str());
     double mem_free_double = atof(mem_free_v.c_str());
 
     double tmu = total_mem_double - mem_free_double;
     file.close();
 
-    return (tmu/total_mem_double);
+    return (tmu / total_mem_double);
   }
 
   return 0.0;
 }
 
 // TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+long LinuxParser::UpTime() {
+  string uptime;
+  string location = LinuxParser::kProcDirectory + LinuxParser::kUptimeFilename;
+  std::ifstream file(location.c_str());
+  if (file.is_open()) {
+    getline(file, uptime);
+    std::replace(uptime.begin(), uptime.end(), ' ', '_');
+    uptime = uptime.substr(0, uptime.find('_'));
+    file.close();
+    auto v = atol(uptime.c_str());
+    return v;
+  }
+
+  return 0;
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -143,10 +161,46 @@ long LinuxParser::IdleJiffies() { return 0; }
 vector<string> LinuxParser::CpuUtilization() { return {}; }
 
 // TODO: Read and return the total number of processes
-int LinuxParser::TotalProcesses() { return 0; }
+int LinuxParser::TotalProcesses() {
+  size_t NOT_FOUND = -1;
+  string location = LinuxParser::kProcDirectory + kStatFilename;
+  std::ifstream file(location.c_str());
+  if (file.is_open()) {
+    string read{};
+    while (getline(file, read)) {
+      if (read.find(kProcesses) != NOT_FOUND) {
+        break;
+      }
+    }
+
+    auto result = read.substr(kProcesses.length(), read.length());
+    file.close();
+    TotalProcesses_count = atoi(result.c_str());
+    return TotalProcesses_count;
+  }
+  return 0;
+}
 
 // TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+int LinuxParser::RunningProcesses() {
+  size_t NOT_FOUND = -1;
+  string location = LinuxParser::kProcDirectory + kStatFilename;
+  std::ifstream file(location.c_str());
+  if (file.is_open()) {
+    string read{};
+    while (getline(file, read)) {
+      if (read.find(kProcessesRunning) != NOT_FOUND) {
+        break;
+      }
+    }
+
+    auto result = read.substr(kProcessesRunning.length(), read.length());
+    file.close();
+    RunningProcesses_count = atoi(result.c_str());
+    return RunningProcesses_count;
+  }
+  return 0;
+}
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
