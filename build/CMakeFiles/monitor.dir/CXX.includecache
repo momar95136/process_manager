@@ -31,8 +31,6 @@ string
 -
 
 ../include/processor.h
-process.h
-../include/process.h
 
 ../include/system.h
 string
@@ -111,6 +109,12 @@ process.h
 /home/parallels/projects/process_m/src/processor.cpp
 processor.h
 /home/parallels/projects/process_m/src/processor.h
+vector
+-
+string
+-
+linux_parser.h
+/home/parallels/projects/process_m/src/linux_parser.h
 
 /home/parallels/projects/process_m/src/system.cpp
 system.h

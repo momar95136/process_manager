@@ -25,7 +25,7 @@ CMakeFiles/monitor.dir/src/process.cpp.o
  ../include/process.h
  /home/parallels/projects/process_m/src/process.cpp
 CMakeFiles/monitor.dir/src/processor.cpp.o
- ../include/process.h
+ ../include/linux_parser.h
  ../include/processor.h
  /home/parallels/projects/process_m/src/processor.cpp
 CMakeFiles/monitor.dir/src/system.cpp.o
