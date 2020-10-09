@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "linux_parser.h"
 #include "process.h"
 
 using std::string;
@@ -14,7 +15,20 @@ using std::vector;
 int Process::Pid() { return 0; }
 
 // TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+float Process::CpuUtilization() {
+   vector<string> utilization = LinuxParser::CpuUtilization();
+   vector<float> calc;
+   float sum, total;
+   for(auto i : utilization)
+   {
+       sum += atoi(i.c_str());
+   }
+   float idelTime = atoi( utilization[3].c_str());
+   total = idelTime / sum;
+   total = 1.0 - total;   
+
+   return total;
+}
 
 // TODO: Return the command that generated this process
 string Process::Command() { return string(); }

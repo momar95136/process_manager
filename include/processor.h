@@ -1,5 +1,7 @@
 #ifndef PROCESSOR_H
+#include "process.h"
 #define PROCESSOR_H
+
 
 class Processor {
  public:
@@ -7,6 +9,7 @@ class Processor {
 
   // TODO: Declare any necessary private members
  private:
+   Process process;
 };
 
 #endif

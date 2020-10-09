@@ -72,6 +72,25 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
+vector<int> LinuxParser::Pids_old() {
+  vector<int> pids;
+  DIR* directory = opendir(kProcDirectory.c_str());
+  struct dirent* file;
+  while ((file = readdir(directory)) != nullptr) {
+    // Is this a directory?
+    if (file->d_type == DT_DIR) {
+      // Is every character of the name a digit?
+      string filename(file->d_name);
+      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        int pid = stoi(filename);
+        pids.push_back(pid);
+      }
+    }
+  }
+  closedir(directory);
+  return pids;
+}
+
 // DONE: Read and return the system memory utilization
 float LinuxParser::MemoryUtilization() {
   // total used memory = MemTotal - MemFree
@@ -157,10 +176,27 @@ long LinuxParser::ActiveJiffies() { return 0; }
 // TODO: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0; }
 
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+// DONE: Read and return CPU utilization
+vector<string> LinuxParser::CpuUtilization() {
+  vector<string> utilzation;
+  string tokens;
+  std::ifstream stream(LinuxParser::kProcDirectory +
+                       LinuxParser::kStatFilename);
+  if (stream.is_open()) {
+    getline(stream, tokens);
+    std::istringstream sb(tokens);
+    while (sb >> tokens) {
+      if (atoi(tokens.c_str())) {
+        utilzation.push_back(tokens);
+      }
+    }
+    stream.close();
+  }
 
-// TODO: Read and return the total number of processes
+  return utilzation;
+}
+
+// DONE: Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
   size_t NOT_FOUND = -1;
   string location = LinuxParser::kProcDirectory + kStatFilename;

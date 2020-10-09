@@ -26,6 +26,7 @@ const std::string kProcessesRunning{"procs_running"};
 float MemoryUtilization();
 long UpTime();
 std::vector<int> Pids();
+std::vector<int> Pids_old();
 int TotalProcesses();
 int RunningProcesses();
 std::string OperatingSystem();

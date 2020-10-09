@@ -31,6 +31,8 @@ string
 -
 
 ../include/processor.h
+process.h
+../include/process.h
 
 ../include/system.h
 string
@@ -101,6 +103,8 @@ string
 -
 vector
 -
+linux_parser.h
+/home/parallels/projects/process_m/src/linux_parser.h
 process.h
 /home/parallels/projects/process_m/src/process.h
 
