@@ -17,6 +17,8 @@ regex
 -
 string
 -
+vector
+-
 
 ../include/ncurses_display.h
 curses.h
@@ -58,6 +60,10 @@ linux_parser.h
 dirent.h
 -
 unistd.h
+-
+filesystem
+-
+iostream
 -
 regex
 -

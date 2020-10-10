@@ -3,6 +3,8 @@
 #include <dirent.h>
 #include <unistd.h>
 
+#include <filesystem>
+#include <iostream>
 #include <regex>
 #include <string>
 #include <vector>
@@ -55,20 +57,16 @@ string LinuxParser::Kernel() {
 // BONUS: Update this to use std::filesystem
 vector<int> LinuxParser::Pids() {
   vector<int> pids;
-  DIR* directory = opendir(kProcDirectory.c_str());
-  struct dirent* file;
-  while ((file = readdir(directory)) != nullptr) {
-    // Is this a directory?
-    if (file->d_type == DT_DIR) {
-      // Is every character of the name a digit?
-      string filename(file->d_name);
-      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-        int pid = stoi(filename);
+  auto location = kProcDirectory.c_str();
+  std::filesystem::path p(location);
+  for (const auto& entry : std::filesystem::directory_iterator(p)) {
+    if (entry.is_directory()) {
+      int pid = atoi(entry.path().filename().c_str());
+      if (pid > 0) {
         pids.push_back(pid);
       }
     }
   }
-  closedir(directory);
   return pids;
 }
 
@@ -120,20 +118,6 @@ float LinuxParser::MemoryUtilization() {
     std::string mem_free_v = std::regex_replace(
         mem_free, std::regex("[^0-9]*([0-9]+).*"), std::string("$1"));
 
-    /* string mem_available;
-    getline(file, mem_available);
-    mem_available.erase(
-        std::remove(mem_available.begin(), mem_available.end(), ' '),
-        mem_available.end());
-
-    string buffer;
-    getline(file, buffer);
-    buffer.erase(std::remove(buffer.begin(), buffer.end(), ' '), buffer.end());
-
-    string cache;
-    getline(file, cache);
-    cache.erase(std::remove(cache.begin(), cache.end(), ' '), cache.end()); */
-
     double total_mem_double = atof(MemTotal_v.c_str());
     double mem_free_double = atof(mem_free_v.c_str());
 
@@ -146,7 +130,7 @@ float LinuxParser::MemoryUtilization() {
   return 0.0;
 }
 
-// TODO: Read and return the system uptime
+// DONE: Read and return the system uptime
 long LinuxParser::UpTime() {
   string uptime;
   string location = LinuxParser::kProcDirectory + LinuxParser::kUptimeFilename;
@@ -217,7 +201,7 @@ int LinuxParser::TotalProcesses() {
   return 0;
 }
 
-// TODO: Read and return the number of running processes
+// DONE: Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
   size_t NOT_FOUND = -1;
   string location = LinuxParser::kProcDirectory + kStatFilename;
@@ -238,21 +222,111 @@ int LinuxParser::RunningProcesses() {
   return 0;
 }
 
-// TODO: Read and return the command associated with a process
+// DONE: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid [[maybe_unused]]) { return string(); }
+string LinuxParser::Command(int pid) {
+  string command;
+  string processLocation =
+      kProcDirectory + std::to_string(pid) + kCmdlineFilename;
+  std::ifstream stream(processLocation.c_str());
+  if (stream.is_open()) {
+    getline(stream, command);
+    stream.close();
+  }
 
-// TODO: Read and return the memory used by a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(int pid [[maybe_unused]]) { return string(); }
+  return command;
+}
 
-// TODO: Read and return the user ID associated with a process
+// DONE: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid [[maybe_unused]]) { return string(); }
+string LinuxParser::Ram(int pid) {
+  std::istringstream ss;
+  string ram;
+  string processLocation =
+      kProcDirectory + std::to_string(pid) + kStatusFilename;
+  std::ifstream stream(processLocation.c_str());
+  if (stream.is_open()) {
+    string s;
+    while (getline(stream, s)) {
+      if (s.find("VmSize:") != string::npos) {
+        ss.str(s);
+        ss >> ram;
+        ss >> ram;
+        stream.close();
+        return ram;
+      }
+    }
+
+    stream.close();
+  }
+
+  return "";
+}
+
+// DONE: Read and return the user ID associated with a process
+// REMOVE: [[maybe_unused]] once you define the function
+string LinuxParser::Uid(int pid) {
+  std::istringstream ss;
+  string uid;
+  string processLocation =
+      kProcDirectory + std::to_string(pid) + kStatusFilename;
+  std::ifstream stream(processLocation.c_str());
+  if (stream.is_open()) {
+    string s;
+    while (getline(stream, s)) {
+      if (s.find("Uid:") != string::npos) {
+        ss.str(s);
+        ss >> uid;
+        ss >> uid;
+        stream.close();
+        return uid;
+      }
+    }
+
+    stream.close();
+  }
+
+  return "";
+}
 
 // TODO: Read and return the user associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid [[maybe_unused]]) { return string(); }
+string LinuxParser::User(int pid) {
+  string UID = Uid(pid);
+  string del(":");
+  string userName;
+  string line;
+  string processLocation = kPasswordPath;
+  std::ifstream stream(processLocation.c_str());
+  while (getline(stream, line)) {
+     auto v = split(line, del);
+     if(v[2] == UID)
+     {
+       stream.close();
+       return v[0];
+     }
+  }
+
+  return UID;
+}
+
+// Spliting a string based on a delimiter
+vector<string> LinuxParser::split(const string& str, const string& delim) {
+  vector<string> tokens;
+  size_t prev = 0, pos = 0;
+  do {
+    pos = str.find(delim, prev);
+    if (pos == string::npos) {
+      pos = str.length();
+    }
+    string token = str.substr(prev, pos - prev);
+    if (!token.empty()) {
+      tokens.push_back(token);
+    }
+    prev = pos + delim.length();
+  } while (pos < str.length() && prev < str.length());
+  return tokens;
+}
 
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
