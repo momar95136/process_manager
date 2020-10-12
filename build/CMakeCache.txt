@@ -17,9 +17,8 @@
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
-//Choose the type of build, options are: None Debug Release RelWithDebInfo
-// MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=debug
+//No help, variable specified on the command line.
+CMAKE_BUILD_TYPE:STRING=Debug
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
@@ -205,6 +204,9 @@ CURSES_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
 CURSES_NCURSES_LIBRARY:FILEPATH=/usr/lib64/libncurses.so
+
+//The directory containing a CMake configuration file for KernelHeaders.
+KernelHeaders_DIR:PATH=KernelHeaders_DIR-NOTFOUND
 
 //Value Computed by CMake
 monitor_BINARY_DIR:STATIC=/home/parallels/projects/process_m/build

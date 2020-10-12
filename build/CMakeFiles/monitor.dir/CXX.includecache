@@ -31,6 +31,8 @@ system.h
 ../include/process.h
 string
 -
+vector
+-
 
 ../include/processor.h
 
@@ -97,6 +99,10 @@ system.h
 /home/parallels/projects/process_m/src/system.h
 
 /home/parallels/projects/process_m/src/process.cpp
+process.h
+/home/parallels/projects/process_m/src/process.h
+sys/time.h
+-
 unistd.h
 -
 cctype
@@ -109,8 +115,6 @@ vector
 -
 linux_parser.h
 /home/parallels/projects/process_m/src/linux_parser.h
-process.h
-/home/parallels/projects/process_m/src/process.h
 
 /home/parallels/projects/process_m/src/processor.cpp
 processor.h
@@ -134,6 +138,8 @@ set
 string
 -
 vector
+-
+algorithm
 -
 linux_parser.h
 /home/parallels/projects/process_m/src/linux_parser.h
